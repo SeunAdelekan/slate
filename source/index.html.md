@@ -136,12 +136,16 @@ request.end(body)
 
 This endpoint facilitates the validation of a user via a given mobile number. Requests should be forwarded to the  `/v1/users/auth/validate` URL path.
 
+### HTTP Request
+
+`POST https://api.console.eyowo.com/v1/users/auth/validate`
+
 ### Request Body.
 The request body of the validate user request consists of a single attribute.
 
 Parameter | Type | Required | Description
 --------- | ------- | ------ | -----------
-mobile | string | true | Any string representation of a valid Nigerian mobile number.
+`mobile` | string | true | Any string representation of a valid Nigerian mobile number.
 
 ### Response
 A successful request receives a response with an HTTP 200 status code with a response body containing a data object consisting of the details of the validated user.
@@ -150,8 +154,8 @@ The `user` object contains the following attributes:
 
 Parameter | Type | Description
 --------- | ------- | -----------
-id | string | The unique identifier of the Eyowo user.
-mobile | string | The corresponding phone number of the registered user. 
+`id` | string | The unique identifier of the Eyowo user.
+`mobile` | string | The corresponding phone number of the registered user. 
 
 ## User Login
 
@@ -218,14 +222,18 @@ request.end(body)
 Call this endpoint to initiate and validate user login requests. Requests should be forwarded to the  `/v1/users/auth` 
 URL path.
 
+### HTTP Request
+
+`POST https://api.console.eyowo.com/v1/users/auth/validate`
+
 ### Request Body.
 The request body of the validate user request consists of a single attribute.
 
 Parameter | Type | Required | Description
 --------- | ------- | ------ | -----------
-mobile | string | true | Any string representation of a valid Nigerian mobile number.
-factor | string | true | The login verification method to be used. The currently supported value for this attribute is`sms`.
-passcode | string | false | The passcode send to the verification medium of the user. Eyowo passcodes are numeric strings of length `6`.
+`mobile` | string | true | Any string representation of a valid Nigerian mobile number.
+`factor` | string | true | The login verification method to be used. The currently supported value for this attribute is`sms`.
+`passcode` | string | false | The passcode send to the verification medium of the user. Eyowo passcodes are numeric strings of length `6`.
 
 ### Login Initiation Request
 To initiate a user login request, call the user login endpoint with the `mobile` and `factor` request attributes.
@@ -238,8 +246,8 @@ received from a successful login initiation request.
 
 Parameter | Type | Description
 --------- | ------- | -----------
-success | boolean | The unique identifier of the Eyowo user.
-message | string | A success message. 
+`success` | boolean | The unique identifier of the Eyowo user.
+`message` | string | A success message. 
 
 ### Login Authorization Request
 To authorize a user login request, call the user login endpoint with the `mobile`, `factor`, and `passcode` request
@@ -251,9 +259,190 @@ received from a successful login initiation request.
 
 Parameter | Type | Description
 --------- | ------- | -----------
-success | boolean | The unique identifier of the Eyowo user.
-message | string | A success message. 
-data | object | A JSON object containing an `accessToken`, `refreshToken` and `expiresIn` attribute - which defining the time in seconds to token expiry. 
+`success` | boolean | The unique identifier of the Eyowo user.
+`message` | string | A success message. 
+`data` | object | A JSON object containing an `accessToken`, `refreshToken` and `expiresIn` attribute - which defining the time in seconds to token expiry.
+
+# Balance
+
+```shell
+curl --location --request GET "https://api.console.eyowo.com/v1/users/balance" \
+  --header "Content-Type: application/json" \
+  --header "X-App-Key: 842e87acd5ef90caae15fb7bcdf882e9" \
+  --header "X-IV: adb23a50962ad17ec259a350c5525ab1" \
+  --header "X-App-Wallet-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNGVmZTQ2NWMwOTJmNWE1NGE1ZjVhNSIsIm1vYmlsZSI6IjIzNDkwOTU4MDE3NzIiLCJpYXQiOjE1NDg2ODA3NzQsImV4cCI6MTU0ODc2NzE3NH0.hUjwqiSfk1J6HaMwDkNsKkOJdTaEoT0wO54pFFDCyzA" \
+  --data "{
+	\"authData\": \"/TnukdZXUH/AwUxQBwi+sQiAnoMJrDVAPoUwugKLYkKwkTXLQ0Yl5B6DwNFxslVd/HGDNxBCRveoDZNTK96RaQ==\"
+}"
+```
+
+> Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "user": {
+      "id": "OKHN8E4SS",
+      "mobile": "2349095801772",
+      "balance": 526548935
+    }
+  }
+}
+```
+
+This resource is used to retrieve the wallet balance of an Eyowo user. Requests should be forwarded to the  `/v1/users/balance` endpoint.
+
+### HTTP Request
+
+`POST https://api.console.eyowo.com/v1/users/balance`
+
+### Request Body
+No data is sent in the request body.
+
+### Response
+A successful request receives a response with an HTTP 200 status code with a response body containing a data object consisting `user` object.
+
+The `user` object contains the following attributes:
+
+Parameter | Type | Description
+--------- | ------- | -----------
+`id` | string | The unique identifier of the Eyowo user.
+`mobile` | string | The corresponding phone number of the registered user. 
+`balance` | long | The wallet balance of the user in Kobo. 
+
+# Transfer
+
+## Transfer to Phone
+
+```shell
+curl --location --request POST "https://api.console.eyowo.com/v1/users/transfers/phone" \
+  --header "Content-Type: application/json" \
+  --header "X-App-Key: 842e87acd5ef90caae15fb7bcdf882e9" \
+  --header "X-IV: adb23a50962ad17ec259a350c5525ab1" \
+  --header "X-App-Wallet-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNGVmZTQ2NWMwOTJmNWE1NGE1ZjVhNSIsIm1vYmlsZSI6IjIzNDkwOTU4MDE3NzIiLCJpYXQiOjE1NDg2ODA3NzQsImV4cCI6MTU0ODc2NzE3NH0.hUjwqiSfk1J6HaMwDkNsKkOJdTaEoT0wO54pFFDCyzA" \
+  --data "{
+	\"authData\": \"/TnukdZXUH/AwUxQBwi+sQiAnoMJrDVAPoUwugKLYkKwkTXLQ0Yl5B6DwNFxslVd/HGDNxBCRveoDZNTK96RaQ==\"
+}"
+```
+
+> Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "transaction": {
+      "reference": "5c4f2d205d73fe5abe0a4393",
+      "amount": 10000
+    }
+  },
+  "message": "Transaction successful"
+}
+```
+
+### HTTP Request
+
+`POST https://api.console.eyowo.com/v1/users/transfers/phone`
+
+### Request Body
+
+Parameter | Type | Required | Description
+--------- | ------- | ------ | -----------
+`amount` | long | true | Amount to transfer in Kobo.
+`mobile` | string | true | Phone number of user to transfer to.
+
+## Transfer to Bank
+
+```shell
+curl --location --request POST "https://api.console.eyowo.com/v1/users/transfers/bank" \
+  --header "Content-Type: application/json" \
+  --header "X-App-Key: 842e87acd5ef90caae15fb7bcdf882e9" \
+  --header "X-IV: adb23a50962ad17ec259a350c5525ab1" \
+  --header "X-App-Wallet-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNGVmZTQ2NWMwOTJmNWE1NGE1ZjVhNSIsIm1vYmlsZSI6IjIzNDkwOTU4MDE3NzIiLCJpYXQiOjE1NDg2ODA3NzQsImV4cCI6MTU0ODc2NzE3NH0.hUjwqiSfk1J6HaMwDkNsKkOJdTaEoT0wO54pFFDCyzA" \
+  --data "{
+	\"authData\": \"/TnukdZXUH/AwUxQBwi+sQiAnoMJrDVAPoUwugKLYkKwkTXLQ0Yl5B6DwNFxslVd/HGDNxBCRveoDZNTK96RaQ==\"
+}"
+```
+
+> Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "transaction": {
+      "reference": "5c4f2d205d73fe5abe0a4393",
+      "amount": 10000
+    }
+  },
+  "message": "Transaction successful"
+}
+```
+
+This resource is used to retrieve the wallet balance of an Eyowo user. Requests should be forwarded to the  `/v1/users/balance` endpoint.
+
+### HTTP Request
+
+`POST https://api.console.eyowo.com/v1/users/transfers/bank`
+
+### Request Body
+
+Parameter | Type | Required | Description
+--------- | ------- | ------ | -----------
+`amount` | long | true | Any string representation of a valid Nigerian mobile number.
+`accountName` | string | true | Name of account owner.
+`accountNumber` | string | true | Account number to transfer funds to.
+`bankCode` | string | true | Unique code of bank.
+
+### Response
+A successful request receives a response with an HTTP 200 status code with a response body containing a data object consisting `user` object.
+
+The `user` object contains the following attributes:
+
+Parameter | Type | Description
+--------- | ------- | -----------
+`id` | string | The unique identifier of the Eyowo user.
+`mobile` | string | The corresponding phone number of the registered user. 
+`balance` | long | The wallet balance of the user in Kobo. 
+
+# Virtual Top Up (VTU)
+
+## Buy VTU
+```shell
+curl --location --request POST "https://api.console.eyowo.com/v1/users/payments/bills/vtu" \
+  --header "Content-Type: application/json" \
+  --header "X-App-Key: 842e87acd5ef90caae15fb7bcdf882e9" \
+  --header "X-IV: adb23a50962ad17ec259a350c5525ab1" \
+  --header "X-App-Wallet-Access-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVjNGVmZTQ2NWMwOTJmNWE1NGE1ZjVhNSIsIm1vYmlsZSI6IjIzNDkwOTU4MDE3NzIiLCJpYXQiOjE1NDg2ODA3NzQsImV4cCI6MTU0ODc2NzE3NH0.hUjwqiSfk1J6HaMwDkNsKkOJdTaEoT0wO54pFFDCyzA" \
+  --data "{
+	\"authData\": \"/TnukdZXUH/AwUxQBwi+sQiAnoMJrDVAPoUwugKLYkKwkTXLQ0Yl5B6DwNFxslVd/HGDNxBCRveoDZNTK96RaQ==\"
+}"
+```
+This resource is used to retrieve the wallet balance of an Eyowo user. Requests should be forwarded to the  `/v1/users/balance` endpoint.
+
+### HTTP Request
+
+`POST https://api.console.eyowo.com/v1/users/payments/bills/vtu`
+
+### Request Body
+
+Parameter | Type | Required | Description
+--------- | ------- | ------ | -----------
+`mobile` | string | true | Any string representation of a valid Nigerian mobile number.
+`amount` | long | true | Amount in Kobo.
+`provider` | string | true | Billing provider to make virtual top up.
+
+### Response
+A successful request receives a response with an HTTP 200 status code with a response body containing a data object consisting `user` object.
+
+The `user` object contains the following attributes:
+
+Parameter | Type | Description
+--------- | ------- | -----------
+`id` | string | The unique identifier of the Eyowo user.
+`mobile` | string | The corresponding phone number of the registered user. 
+`balance` | long | The wallet balance of the user in Kobo. 
 
 # Kittens
 
